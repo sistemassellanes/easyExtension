@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\EasyAccess\\EasyAccess.csproj": {}
+    "D:\\Projects\\EasyExtension\\EasyAccess.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\EasyAccess\\EasyAccess.csproj": {
+    "D:\\Projects\\EasyExtension\\EasyAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\EasyAccess\\EasyAccess.csproj",
+        "projectUniqueName": "D:\\Projects\\EasyExtension\\EasyAccess.csproj",
         "projectName": "EasyAccess",
-        "projectPath": "D:\\Projects\\EasyAccess\\EasyAccess.csproj",
+        "projectPath": "D:\\Projects\\EasyExtension\\EasyAccess.csproj",
         "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\EasyAccess\\obj\\",
+        "outputPath": "D:\\Projects\\EasyExtension\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",

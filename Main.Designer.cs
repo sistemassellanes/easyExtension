@@ -51,6 +51,7 @@
             textboxCylinder = new TextBox();
             textBoxCylinderDescription = new TextBox();
             buttonLookForDescription = new Button();
+            buttonLinde = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridGeneral).BeginInit();
             SuspendLayout();
             // 
@@ -265,11 +266,22 @@
             buttonLookForDescription.UseVisualStyleBackColor = true;
             buttonLookForDescription.Click += button1_Click;
             // 
+            // buttonLinde
+            // 
+            buttonLinde.Location = new Point(18, 419);
+            buttonLinde.Name = "buttonLinde";
+            buttonLinde.Size = new Size(176, 43);
+            buttonLinde.TabIndex = 28;
+            buttonLinde.Text = "Reporte Linde";
+            buttonLinde.UseVisualStyleBackColor = true;
+            buttonLinde.Click += buttonLinde_Click;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1615, 515);
+            Controls.Add(buttonLinde);
             Controls.Add(buttonLookForDescription);
             Controls.Add(textBoxCylinderDescription);
             Controls.Add(textboxCylinder);
@@ -327,5 +339,6 @@
         private Label labelCylinders;
         private TextBox textboxCylinder;
         private TextBox textBoxCylinderDescription;
+        private Button buttonLinde;
     }
 }

@@ -1,4 +1,5 @@
 
+using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using System.Data;
 using System.Diagnostics;
@@ -21,20 +22,14 @@ namespace EasyAccess
             comboBoxClients.Enabled = false;
             buttonLookForDescription.Enabled = false;
             buttonExport.Enabled = false;
+            buttonLinde.Enabled = false;
             Initialize();
             AutoLoadCities();
             AutoLoadClients();
-            //AutoLoadLindeCylinders();
-            //AutoLoadCylinders();
-            //LoadCities();
-            //LoadClients();
         }
 
         public List<EasyCylinder> listLindeCylinders;
         public Dictionary<string, EasyCylinder> dictionaryLindeCylinders;
-
-        //public List<EasyCylinder> listEasyDataLine;
-        //public Dictionary<string, EasyDataLine> dictionaryEasyDataLines;
 
         public List<EasyClient> listClients;
         public List<EasyClient> listAuxClients;
@@ -58,10 +53,6 @@ namespace EasyAccess
         {
             listLindeCylinders = new List<EasyCylinder>();
             dictionaryLindeCylinders = new Dictionary<string, EasyCylinder>();
-
-
-            //listEasyDataLine = new List<EasyDataLine>();
-            //dictionaryEasyDataLines = new Dictionary<string, EasyDataLine>();
 
             listClients = new List<EasyClient>();
             listAuxClients = new List<EasyClient>();
@@ -124,7 +115,7 @@ namespace EasyAccess
             }
         }
 
-        public void LoadClientDataGrid(List<EasyClient> listClients)
+        public void LoadClientDataGrid(List<EasyClient> listClients, bool onlyLinde=false)
         {
             System.Data.DataTable dataTable = new System.Data.DataTable();
             dataTable.Columns.Add("A");
@@ -169,7 +160,10 @@ namespace EasyAccess
 
                             foreach (EasyCylinder cylinder in client.ListCylinder)
                             {
-                                dataTable.Rows.Add(new object[] { cylinder.Description, cylinder.Serial, cylinder.MovementType, cylinder.MovementNumber, cylinder.MovementDate, cylinder.Days, cylinder.ItsLindeDescription() });
+                                if(onlyLinde  && (cylinder.ItsLinde || cylinder.ItsAlmostLinde))
+                                {
+                                    dataTable.Rows.Add(new object[] { cylinder.Description, cylinder.Serial, cylinder.MovementType, cylinder.MovementNumber, cylinder.MovementDate, cylinder.Days, cylinder.ItsLindeDescription() });
+                                }
                             }
                         }
                     }
@@ -184,9 +178,11 @@ namespace EasyAccess
 
         private void ParseLindeCylinders(string textCylinders)
         {
+            List<string> listKeys = dictionaryEasyCylinder.Keys.ToList();
             string[] lines = textCylinders.Split('\n');
             labelGeneralStatusValue.Enabled = true;
             labelGeneralStatusValue.Visible = true;
+
             for (int i = 0; i < lines.Length - 1; i++)
             {
                 labelGeneralStatusValue.Text = i + " de " + lines.Length;
@@ -195,13 +191,49 @@ namespace EasyAccess
 
                 string id = columns[0];
                 EasyCylinder easyCylinder;
-
-                if (dictionaryEasyCylinder.ContainsKey("CL" + id))
+                if (dictionaryEasyCylinder.ContainsKey("CL-" + id))
                 {
-                    easyCylinder = dictionaryEasyCylinder["CL" + id];
+                    Debug.WriteLine("Linde: " + true);
+                    easyCylinder = dictionaryEasyCylinder["CL-" + id];
+
+                    if (easyCylinder.ItsAlmostLinde)
+                    {
+                        easyCylinder.ItsAlmostLinde = false;
+                    }
+
                     easyCylinder.ItsLinde = true;
-                    dictionaryLindeCylinders.Add("CL" + id, easyCylinder);
+                    dictionaryLindeCylinders.Add(easyCylinder.Serial, easyCylinder);
                     listLindeCylinders.Add(easyCylinder);
+                }
+                else
+                {
+                    string serial = "CL-" + id;
+
+                    foreach (string key in listKeys)
+                    {
+                        if(key.Length > 6)
+                        {
+                            if (serial.Contains(key.Substring(0, 7)))
+                            {
+                                Debug.Write("Serial: " + serial + " Contains: " + key.Substring(0, 7) + " Real key: " + key);
+                                if (dictionaryLindeCylinders.ContainsKey(serial) == false)
+                                {
+                                    easyCylinder = dictionaryEasyCylinder[key];
+                                    if(easyCylinder.ItsLinde == false)
+                                    {
+                                        easyCylinder.ItsAlmostLinde = true;
+                                    }
+                                    //easyCylinder.ItsLinde = false;
+                         
+                                    dictionaryLindeCylinders.Add(serial, easyCylinder);
+                                    
+                                    listLindeCylinders.Add(easyCylinder);
+                                }
+                            }
+                        }    
+                    }
+
+                    Debug.WriteLine("Casi linde: " + true);
                 }
             }
 
@@ -454,6 +486,7 @@ namespace EasyAccess
                 buttonLoadCylinders.Enabled = false;
                 string textCylinders = System.IO.File.ReadAllText(oDlg.FileName, Encoding.GetEncoding("UTF-8"));
                 LoadCylinders(textCylinders);
+                buttonLinde.Enabled = true;
             }
         }
 
@@ -858,6 +891,27 @@ namespace EasyAccess
         private void Main_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void buttonLinde_Click(object sender, EventArgs e)
+        {
+            List<EasyClient> listClientsLindeCylinders = new List<EasyClient>();
+            foreach(EasyClient client in listClients)
+            {
+                if (client.CheckIfIHaveSomeLindeCylinder())
+                {
+                    listClientsLindeCylinders.Add(client);
+                }
+            }
+
+            listClientsLindeCylinders.Sort(delegate (EasyClient client1, EasyClient client2)
+            {
+                int compareDescription = client1.EasyLocation.Description.CompareTo(client2.EasyLocation.Description);
+                return compareDescription;
+            }
+                   );
+
+            LoadClientDataGrid(listClientsLindeCylinders, true);
         }
 
 

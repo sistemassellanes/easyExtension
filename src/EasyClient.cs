@@ -57,9 +57,8 @@ public class EasyClient
         bool result = false;
         foreach (EasyCylinder cylinder in ListCylinder)
         {
-            if (cylinder.ItsLinde)
+            if (cylinder.ItsLinde || cylinder.ItsAlmostLinde)
             {
-                result = true;
                 return true;
             }
         }

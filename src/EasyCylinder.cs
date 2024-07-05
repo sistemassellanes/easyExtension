@@ -9,6 +9,7 @@ public class EasyCylinder
     string movementDate;
     string days;
     bool itsLinde;
+    bool itsAlmostLinde;
 
     public EasyCylinder(string serial, string description, string movementNumber, string movementType, string movementDate, string days)
     {
@@ -24,7 +25,10 @@ public class EasyCylinder
     {
         if (itsLinde)
         {
-            return "LINDE";
+            return "RECLAMADO";
+        }else if (itsAlmostLinde)
+        {
+            return "PUEDE SER LINDE";
         }
         return "";
     }
@@ -36,6 +40,8 @@ public class EasyCylinder
     public string MovementType { get => movementType; set => movementType = value; }
     public string MovementDate { get => movementDate; set => movementDate = value; }
     public string Serial { get => serial; set => serial = value; }
+    public bool ItsAlmostLinde { get => itsAlmostLinde; set => itsAlmostLinde = value; }
+
     public override string ToString()
     {
         return "Serial: " + Serial + " Description: " + Description + " MovementNumber: " + MovementNumber + " MovementType: " + MovementType + " Date: " + MovementDate + " Days: " + Days ;
